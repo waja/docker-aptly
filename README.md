@@ -135,6 +135,10 @@ docker-compose down
 docker-compose start
 docker-compose restart
 docker-compose stop
+
+# If you want to test code with run_test.sh, use:
+docker-compose --file docker-compose.test.yml build
+docker-compose --file docker-compose.test.yml run sut
 ```
 
 ### Troubleshooting w same container name
