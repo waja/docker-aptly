@@ -6,7 +6,7 @@
 
 **nginx** is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP proxy server, originally written by Igor Sysoev. More info is on [nginx.org](http://nginx.org/en/).
 
-It project use `supervisor` to manage multiple processes in the container. It configured to start `nginx` & `aptly api server`.
+It project uses `supervisor` to manage multiple processes in the container. It is configured to start `nginx` & `aptly api server`.
 
 ## Quickstart
 
