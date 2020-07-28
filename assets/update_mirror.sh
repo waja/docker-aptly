@@ -62,8 +62,8 @@ done
 for component in ${COMPONENTS[@]}; do
   for dist in ${DISTS[@]}; do
     echo "Creating snapshot of ${REPO} repository mirror.."
-    SNAPSHOTARRAY+="${REPO}-`date +%Y%m%d%H` "
-    aptly snapshot create ${REPO}-`date +%Y%m%d%H` from mirror ${REPO}
+    SNAPSHOTARRAY+="${REPO}-`date +%Y%m%d%H%M` "
+    aptly snapshot create ${REPO}-`date +%Y%m%d%H%M` from mirror ${REPO}
   done
 done
 
@@ -72,7 +72,7 @@ echo ${SNAPSHOTARRAY[@]}
 # Merge snapshots into a single snapshot with updates applied
 echo "Merging snapshots into one.."
 aptly snapshot merge -latest \
-  ${REPO}-merged-`date +%Y%m%d%H` ${SNAPSHOTARRAY[@]}
+  ${REPO}-merged-`date +%Y%m%d%H%M` ${SNAPSHOTARRAY[@]}
 
 # Publish the latest merged snapshot
 set +e
@@ -80,11 +80,11 @@ aptly publish list -raw | awk '{print $2}' | grep "^${REPO}$"
 if [[ $? -eq 0 ]]; then
   aptly publish switch \
     -passphrase="${GPG_PASSPHRASE}" \
-    ${REPO} ${REPO}-merged-`date +%Y%m%d%H`
+    ${REPO} ${REPO}-merged-`date +%Y%m%d%H%M`
 else
   aptly publish snapshot \
     -passphrase="${GPG_PASSPHRASE}" \
-    -distribution=${REPO} ${REPO}-merged-`date +%Y%m%d%H`
+    -distribution=${REPO} ${REPO}-merged-`date +%Y%m%d%H%M`
 fi
 set -e
 
