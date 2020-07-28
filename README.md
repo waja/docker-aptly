@@ -220,8 +220,8 @@ This script consists 3 preconfigured configuration which you can use or use your
 
 ```bash
 UPSTREAM_URL="http://raspbian.raspberrypi.org/raspbian/"
-OS_RELEASE=buster
-DISTS=( ${OS_RELEASE} )
+REPO=raspbian
+DISTS=( buster )
 COMPONENTS=( main contrib non-free rpi )
 ```
 
