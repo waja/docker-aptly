@@ -214,9 +214,16 @@ docker rm 85de5904f6fc73c04f4f8e7d08a09a1a63c2ba28afb5ce45aa9578ebdefeadc7
 ### Create a mirror of Ubuntu's main repository
 
 1. Attach to the container. How attach? See [here](#configure-the-repository).
-2. Run `/opt/update_mirror_ubuntu.sh`.
+2. Run `/opt/update_mirror.sh`.
 
-By default, this script will automate the creation of an Ubuntu 14.04 Trusty repository with the main and universe components, you can adjust the variables in the script to suit your needs.
+This script consists 3 preconfigured configuration which you can use or use your own. For example (default for the Raspbian mirror):
+
+```bash
+UPSTREAM_URL="http://raspbian.raspberrypi.org/raspbian/"
+OS_RELEASE=buster
+DISTS=( ${OS_RELEASE} )
+COMPONENTS=( main contrib non-free rpi )
+```
 
 > If the script fails due to network disconnects etc, just re-run it.
 
@@ -225,8 +232,6 @@ By default, this script will automate the creation of an Ubuntu 14.04 Trusty rep
 > For host a mirror of Ubuntu's main repository, you'll need upwards of 80GB+ (x86_64 only) of free space as of Feb 2016, plan for growth.
 
 When the script completes, you should have a functional mirror that you can point a client to.
-
-For create Debian's mirror use `/opt/update_mirror_debian.sh`.
 
 ___
 
