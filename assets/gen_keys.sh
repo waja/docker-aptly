@@ -12,9 +12,9 @@
 
 gen_batch() {
 
-[[ -z $1 ]] && exit 1;
-[[ -z $2 ]] && exit 1;
-[[ -z $3 ]] && exit 1;
+  [[ -z $1 ]] && exit 1;
+  [[ -z $2 ]] && exit 1;
+  [[ -z $3 ]] && exit 1;
 
   cat << EOF > /opt/gpg_batch
 %echo Generating a GPG key, might take a while
@@ -36,7 +36,7 @@ EOF
 
 # If the repository GPG keypair doesn't exist, create it.
 if [[ ! -f /opt/aptly/aptly.sec ]] || [[ ! -f /opt/aptly/aptly.pub ]]; then
-  echo "Generating new gpg keys"
+  echo "Generating new GPG keys"
   cp -a /dev/urandom /dev/random
 
   # Generate GPG config for generating new keypair
@@ -49,7 +49,7 @@ if [[ ! -f /opt/aptly/aptly.sec ]] || [[ ! -f /opt/aptly/aptly.pub ]]; then
   # Remove batch after generating keypair
   rm /opt/gpg_batch
 else
-  echo "No need to generate new gpg keys"
+  echo "No need to generate new GPG keys"
 fi
 
 # If the repository public key doesn't exist, export it.
@@ -58,5 +58,5 @@ if [[ ! -d /opt/aptly/public ]] || [[ ! -f /opt/aptly/public/aptly_repo_signing.
   mkdir -p /opt/aptly/public
   gpg --export --armor > /opt/aptly/public/aptly_repo_signing.key
 else
-  echo "No need to export gpg keys"
+  echo "No need to export GPG keys"
 fi

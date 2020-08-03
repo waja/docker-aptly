@@ -59,11 +59,11 @@ RUN rm /etc/nginx/sites-enabled/*
 # Create volume
 VOLUME [ "/opt/aptly" ]
 
-# Allow use nginx wo initial procedure of gpg
+# Allow use nginx wo initial procedure of GPG
 RUN mkdir -p /opt/aptly/public
 
 # Declare ports in use
 EXPOSE 80 8080
 
-# Start Supervisor when container starts (He calls nginx)
+# Start Supervisor when container starts (It calls nginx)
 CMD /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf

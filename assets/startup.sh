@@ -15,5 +15,5 @@
 # Import Debian keyrings if they exist
 /opt/imp_keys.sh /usr/share/keyrings/debian-archive-keyring.gpg
 
-# Start Supervisor (He calls nginx)
+# Start Supervisor (It calls nginx)
 /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
