@@ -40,14 +40,15 @@ RUN apt-get -q update \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
+# Create volume
+VOLUME [ "/opt/aptly" ]
+
+RUN ln -s /opt/aptly/gpg /root/.gnupg
+
 # Install configurations
 COPY assets/gpg.conf /root/.gnupg/gpg.conf
 COPY assets/aptly.conf /etc/aptly.conf
 COPY assets/nginx.conf /etc/nginx/conf.d/default.conf
-
-# Aptly looks in /root/.gnupg for default keyrings
-RUN ln -sf /opt/aptly/aptly.sec /root/.gnupg/secring.gpg && \
-    ln -sf /opt/aptly/aptly.pub /root/.gnupg/pubring.gpg
 COPY assets/supervisord.web.conf /etc/supervisor/conf.d/web.conf
 
 # Install scripts
@@ -55,9 +56,6 @@ COPY assets/*.sh /opt/
 
 # Configure Nginx
 RUN rm /etc/nginx/sites-enabled/*
-
-# Create volume
-VOLUME [ "/opt/aptly" ]
 
 # Allow use nginx wo initial procedure of GPG
 RUN mkdir -p /opt/aptly/public
@@ -67,3 +65,5 @@ EXPOSE 80 8080
 
 # Start Supervisor when container starts (It calls nginx)
 CMD /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
+
+WORKDIR /opt/aptly

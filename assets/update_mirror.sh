@@ -1,8 +1,13 @@
 #! /usr/bin/env bash
 set -e
 
-# Automate the initial creation and update of a mirror in aptly
+# Automate the initial creation and update of a mirror in aptly.
 # Uncomment a prepared section or use your own.
+
+# For any section you select, you need to install repo signing public
+# key, if you wanna take it from your system you can look for in:
+# /usr/share/keyrings/ (like /usr/share/keyrings/ubuntu-archive-keyring.gpg) or you can take it from apt-key (apt-key help / list / export).
+# Export the key to the pubring in GPG utility (ususaly /root/.gnupg/pubring.gpg). You can use prepared script /opt/keys_imp.sh for it.
 
 # The variables (as set below) will create a mirror of the Ubuntu Trusty repo
 # with the main & universe components, you can add other components like restricted
@@ -16,6 +21,7 @@ set -e
 # OS_RELEASE=bionic
 # DISTS=( ${OS_RELEASE} ${OS_RELEASE}-updates ${OS_RELEASE}-security )
 # COMPONENTS=( main universe )
+# ARCH=amd64
 
 # The variables (as set below) will create a mirror of the Debian Jessie repo
 # with the main and update components. If you do mirror these, you'll want to
@@ -27,6 +33,7 @@ set -e
 # OS_RELEASE=jessie
 # DISTS=( ${OS_RELEASE} ${OS_RELEASE}-updates )
 # COMPONENTS=( main )
+# ARCH=amd64
 
 # The variables (as set below) will create a mirror of the default Raspbian Buster
 # repo (that is used in Raspbian images).
@@ -35,8 +42,9 @@ UPSTREAM_URL="http://raspbian.raspberrypi.org/raspbian/"
 REPO=raspbian
 DISTS=( buster )
 COMPONENTS=( main contrib non-free rpi )
+ARCH=armhf
 
-# Create repository mirrors if they don't exist
+# Create the mirror repository, if it doesn't exist
 set +e
 for component in ${COMPONENTS[@]}; do
   for dist in ${DISTS[@]}; do
@@ -44,13 +52,13 @@ for component in ${COMPONENTS[@]}; do
     if [[ $? -ne 0 ]]; then
       echo "Creating mirror of ${REPO} repository."
       aptly mirror create \
-        -architectures=amd64 ${REPO} ${UPSTREAM_URL} ${dist} ${component}
+        -architectures=${ARCH} ${REPO} ${UPSTREAM_URL} ${dist} ${component}
     fi
   done
 done
 set -e
 
-# Update all repository mirrors
+# Update the all repository mirrors
 for component in ${COMPONENTS[@]}; do
   for dist in ${DISTS[@]}; do
     echo "Updating ${REPO} repository mirror.."
@@ -88,7 +96,7 @@ else
 fi
 set -e
 
-# Export the GPG Public key
+# Export the all GPG Public keys
 if [[ ! -f /opt/aptly/public/aptly_repo_signing.key ]]; then
   gpg --export --armor > /opt/aptly/public/aptly_repo_signing.key
 fi

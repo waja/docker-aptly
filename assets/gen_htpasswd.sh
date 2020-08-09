@@ -13,8 +13,8 @@
 : ${USER:=${1}}
 : ${PASS:=${2}}
 
-[[ -z ${USER} ]] && { echo "User didn't specified"; exit 1; }
-[[ -z ${PASS} ]] && { echo "Pass didn't specified"; exit 1; }
+[[ -z ${USER} ]] && { echo "User wasn't specified"; exit 1; }
+[[ -z ${PASS} ]] && { echo "Pass wasn't specified"; exit 1; }
 
 RECORD=$(echo -n "${USER}:" && echo "${PASS}" | openssl passwd -apr1 -stdin)
 
