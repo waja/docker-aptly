@@ -1,12 +1,10 @@
 # docker-aptly
 
-**docker-aptly** is container with `aptly` backed by `nginx`.
+![container diagram](/docs/aptly.png)
 
 **aptly** is a swiss army knife for Debian repository management: it allows you to mirror remote repositories, manage local package repositories, take snapshots, pull new versions of packages along with dependencies, publish as Debian repository. More info are on [aptly.info](http://aptly.info) and on [github](https://github.com/aptly-dev/aptly).
 
 **nginx** is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP proxy server, originally written by Igor Sysoev. More info is on [nginx.org](http://nginx.org/en/).
-
-It project uses `supervisor` to manage multiple processes in the container. It is configured to start `nginx` & `aptly api server`.
 
 ## Quickstart
 
@@ -18,7 +16,7 @@ It project uses `supervisor` to manage multiple processes in the container. It i
 
     Also you can use `--driver` option. By default it equals to `local`. More info is [here](https://docs.docker.com/engine/extend/legacy_plugins/#volume-plugins#volume-plugins).
 
-    All of aptly's data (including PGP key and GPG keyrings) is bind mounted outside of the container to preserve it if the container is removed or rebuilt.
+    All of aptly's data (including GPG keyrings) is bind mounted outside of the container to preserve it if the container is removed or rebuilt.
 
 2. If you want to customize image or build the container locally, **check out this repository and build, otherwise skip this step** and use prepared image from [`DockerHub`](https://hub.docker.com/r/urpylka/aptly):
 
@@ -27,27 +25,25 @@ It project uses `supervisor` to manage multiple processes in the container. It i
     docker build docker-aptly --tag urpylka/aptly:latest
     ```
 
-    If you decide build own I suggest use [`docker-compose`](#manage-locally) commands. It will build own image before use.
+    If you decide build own I suggest you use [`docker-compose`](#manage-locally) commands. It will build own image before use.
 
-3. Then **generate keypair**. It won't regenerate that, if you already have keypair:
+3. Then **generate keypair**. It won't regenerate that, if you already have keypair (if a keyring exist at `aptly-data`):
 
     ```bash
     docker run --rm --log-driver=none \
-      --env FULL_NAME="First Last" \
-      --env EMAIL_ADDRESS="your@email.com" \
-      --env GPG_PASSPHRASE="PickAPassword" \
       --volume aptly-data:/opt/aptly \
-      urpylka/aptly:latest /opt/gen_keys.sh
+      urpylka/aptly:latest \
+      /opt/keys_gen.sh "First Last" "your@email.com" "Password"
     ```
 
-    `FULL_NAME` and `EMAIL_ADDRESS` will be associated with the GPG apt signing key.
+    `"First Last" "your@email.com" "Password"` will be associated with the GPG apt signing key.
 
-    Keep in the mind that the GPG passphrase which you specified in `GPG_PASSPHRASE` using ONLY BY USERS (at the external container) for:
+    Keep in the mind that the GPG passphrase using ONLY BY USERS (at the external container) for:
 
     1. Generating GPG keys (In the temporary container)
     2. Singing Aptly packages (using CLI tool or REST API)
 
-    Keep your GPG passphrase separately from the GPG key pair.
+    Keep your GPG passphrase separately from the GPG keypair (keyrings).
 
 4. **Run `aptly` and `nginx`**
 
@@ -76,6 +72,8 @@ It project uses `supervisor` to manage multiple processes in the container. It i
     `--name="aptly"` | Name of the container
     `--volume aptly-data:/opt/aptly` | Path (if you want set path use absolute path) or volume's name that aptly will use to store his data : mapped path in the container
     `--publish 80:80` | Docker host port : mapped port in the container
+    `--network="some-nw"` | Attach a docker container to some network
+    `--rm` | Remove a docker container when it will be stopped
 
 5. **Next steps**
 
@@ -88,7 +86,7 @@ It project uses `supervisor` to manage multiple processes in the container. It i
         docker rm aptly
         ```
 
-    * Use `docker volume` to manage created volume.
+    * Use `docker volume` to manage the created volume.
 
     * **Configure your own debian-repository.** See [here](#configure-the-repository).
 
@@ -96,10 +94,9 @@ It project uses `supervisor` to manage multiple processes in the container. It i
 
         ```bash
         docker run --rm --log-driver=none \
-        --env USER="admin" \
-        --env PASS="passwd" \
-        --volume aptly-data:/opt/aptly \
-        urpylka/aptly:latest /opt/gen_htpasswd.sh
+          --volume aptly-data:/opt/aptly \
+          urpylka/aptly:latest \
+          /opt/gen_htpasswd.sh "admin" "passwd"
         ```
 
         After executing:
@@ -109,6 +106,8 @@ It project uses `supervisor` to manage multiple processes in the container. It i
         ```
 
         **Security:** Please note using http is not safety (your password sends as plain text). Add mandatory SSL encryption for `/api` via proxy server fe nginx. See [here](https://morph027.gitlab.io/post/protect-aptly-api-with-basic-authentication/).
+
+    * **Configure a mirror of some repo.** See [here](#configure-the-mirror).
 
     * **Configure clients.** See [here](#setup-a-client-for-use-your-repo).
 
@@ -155,7 +154,7 @@ docker rm 85de5904f6fc73c04f4f8e7d08a09a1a63c2ba28afb5ce45aa9578ebdefeadc7
 
 ## Setup a client for use your repo
 
-1. Fetch the public PGP key from your aptly repository and add it to your trusted repositories
+1. Fetch the public GPG key from your aptly repository and add it to your trusted repositories
 
     ```bash
     wget http://YOUR_HOST_FOR_APTLY/aptly_repo_signing.key
@@ -211,25 +210,30 @@ docker rm 85de5904f6fc73c04f4f8e7d08a09a1a63c2ba28afb5ce45aa9578ebdefeadc7
 
     Read [the official documentation](https://www.aptly.info/doc/overview/) for learn more about aptly.
 
-### Create a mirror of Ubuntu's main repository
+## Configure the mirror
 
-1. Attach to the container. How attach? See [here](#configure-the-repository).
-2. Run `/opt/update_mirror.sh`.
+1. Enter to the container. How to attach? See [here](#configure-the-repository).
+2. Run `/opt/update_mirror.sh`. This script consists 3 preconfigured configuration which you can use or use your own. For use uncomment one (by default for the Raspbian mirror):
 
-This script consists 3 preconfigured configuration which you can use or use your own. For example (default for the Raspbian mirror):
+    ```bash
+    UPSTREAM_URL="http://raspbian.raspberrypi.org/raspbian/"
+    REPO=raspbian
+    DISTS=( buster )
+    COMPONENTS=( main contrib non-free rpi )
+    ARCH=armhf
+    ```
 
-```bash
-UPSTREAM_URL="http://raspbian.raspberrypi.org/raspbian/"
-REPO=raspbian
-DISTS=( buster )
-COMPONENTS=( main contrib non-free rpi )
-```
+3. After that you need to setup the public key is associated with this repo to `/opt/aptly/gpg/trustedkeys.gpg` (it is linked w `/root/.gnupg/trustedkeys.gpg`), for this use `/opt/keys_imp.sh`, otherwise you will catch the error:
+
+    ```log
+    ERROR: unable to fetch mirror: verification of detached signature    failed: exit status 2
+    ```
 
 > If the script fails due to network disconnects etc, just re-run it.
 
  The initial download of the repository may take quite some time depending on your bandwidth limits, it may be in your best interest to open a screen, tmux or byobu session before proceeding.
 
-> For host a mirror of Ubuntu's main repository, you'll need upwards of 80GB+ (x86_64 only) of free space as of Feb 2016, plan for growth.
+> For host a mirror of Ubuntu's main repository, you'll need upwards of 80GB+ (x86_64 only) of free space as of Feb 2016, plan for growth. Raspbian takes 69GB+.
 
 When the script completes, you should have a functional mirror that you can point a client to.
 
