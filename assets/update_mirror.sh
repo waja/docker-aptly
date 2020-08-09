@@ -82,6 +82,9 @@ echo "Merging snapshots into one.."
 aptly snapshot merge -latest \
   ${REPO}-merged-`date +%Y%m%d%H%M` ${SNAPSHOTARRAY[@]}
 
+# Enter GPG_PASSPHRASE
+read GPG_PASSPHRASE
+
 # Publish the latest merged snapshot
 set +e
 aptly publish list -raw | awk '{print $2}' | grep "^${REPO}$"
