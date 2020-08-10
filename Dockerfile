@@ -37,6 +37,7 @@ RUN apt-get -q update \
     curl \
     xz-utils=5.1.1alpha+20120614-2ubuntu2 \
     apt-utils \
+    bash-completion \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
@@ -58,6 +59,15 @@ COPY assets/supervisord.web.conf /etc/supervisor/conf.d/web.conf
 # Install scripts
 COPY assets/*.sh /opt/
 
+RUN wget https://raw.githubusercontent.com/aptly-dev/aptly/v1.4.0/completion.d/aptly \
+  -O /usr/share/bash-completion/completions/aptly 2>/dev/stdout \
+  && echo "if ! shopt -oq posix; then\n\
+  if [ -f /usr/share/bash-completion/bash_completion ]; then\n\
+    . /usr/share/bash-completion/bash_completion\n\
+  elif [ -f /etc/bash_completion ]; then\n\
+    . /etc/bash_completion\n\
+  fi\n\
+fi" >> /etc/bash.bashrc
 
 
 # Declare ports in use
