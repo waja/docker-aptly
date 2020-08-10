@@ -15,6 +15,8 @@ if [[ -f ${1} ]]; then
   I=${1}
   O="/opt/aptly/gpg/trustedkeys.gpg"
 
+  # gpg --no-options --no-default-keyring --keyring ${O} --keyserver pool.sks-keyservers.net --recv-keys 9D6D8F6BC857C906 AA8E81B4331F7F50
+
   gpg --no-options --no-default-keyring --keyring ${I} --export | \
   gpg --no-options --no-default-keyring --keyring ${O} --import
 
