@@ -41,7 +41,7 @@ if [[ ! -f /opt/aptly/gpg/secring.gpg ]] || [[ ! -f /opt/aptly/gpg/pubring.gpg ]
   mkdir -p /opt/aptly/gpg
 
   # Generate the GPG config for generating the new keypair
-  gen_batch ${FULL_NAME} ${EMAIL_ADDRESS} ${GPG_PASSPHRASE}
+  gen_batch "${FULL_NAME}" "${EMAIL_ADDRESS}" "${GPG_PASSPHRASE}"
 
   # If your system doesn't have a lot of entropy this may, take a long time
   # Google how-to create "artificial" entropy, if this gets stuck

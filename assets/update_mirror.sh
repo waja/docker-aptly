@@ -78,11 +78,12 @@ done
 echo ${SNAPSHOTARRAY[@]}
 
 # Merge snapshots into a single snapshot with updates applied
+REPO_MERGED=${REPO}-merged-`date +%Y%m%d%H%M`
 echo "Merging snapshots into one.."
 aptly snapshot merge -latest \
-  ${REPO}-merged-`date +%Y%m%d%H%M` ${SNAPSHOTARRAY[@]}
+  ${REPO_MERGED} ${SNAPSHOTARRAY[@]}
 
-# Enter GPG_PASSPHRASE
+echo "Enter GPG passphrase"
 read GPG_PASSPHRASE
 
 # Publish the latest merged snapshot
@@ -91,11 +92,11 @@ aptly publish list -raw | awk '{print $2}' | grep "^${REPO}$"
 if [[ $? -eq 0 ]]; then
   aptly publish switch \
     -passphrase="${GPG_PASSPHRASE}" \
-    ${REPO} ${REPO}-merged-`date +%Y%m%d%H%M`
+    ${REPO} ${REPO_MERGED}
 else
   aptly publish snapshot \
     -passphrase="${GPG_PASSPHRASE}" \
-    -distribution=${REPO} ${REPO}-merged-`date +%Y%m%d%H%M`
+    -distribution=${REPO_MERGED}
 fi
 set -e
 
