@@ -46,58 +46,56 @@ ARCH=armhf
 
 # Create the mirror repository, if it doesn't exist
 set +e
-for component in ${COMPONENTS[@]}; do
-  for dist in ${DISTS[@]}; do
-    aptly mirror list -raw | grep "^${REPO}$"
-    if [[ $? -ne 0 ]]; then
-      echo "Creating mirror of ${REPO} repository."
-      aptly mirror create \
-        -architectures=${ARCH} ${REPO} ${UPSTREAM_URL} ${dist} ${component}
-    fi
-  done
+for dist in ${DISTS[@]}; do
+  aptly mirror list -raw | grep "^${REPO}-${dist}$"
+  if [[ $? -ne 0 ]]; then
+    echo "Creating mirror of ${REPO} repository."
+    aptly mirror create \
+      -architectures=${ARCH} ${REPO}-${dist} ${UPSTREAM_URL} ${dist} ${COMPONENTS[@]}
+  fi
 done
 set -e
 
 # Update the all repository mirrors
-for component in ${COMPONENTS[@]}; do
-  for dist in ${DISTS[@]}; do
-    echo "Updating ${REPO} repository mirror.."
-    aptly mirror update ${REPO}
-  done
+for dist in ${DISTS[@]}; do
+  echo "Updating ${REPO} repository mirror.."
+  aptly mirror update ${REPO}-${dist}
 done
 
 # Create snapshots of updated repositories
-for component in ${COMPONENTS[@]}; do
-  for dist in ${DISTS[@]}; do
-    echo "Creating snapshot of ${REPO} repository mirror.."
-    SNAPSHOTARRAY+="${REPO}-`date +%Y%m%d%H%M` "
-    aptly snapshot create ${REPO}-`date +%Y%m%d%H%M` from mirror ${REPO}
-  done
+for dist in ${DISTS[@]}; do
+  echo "Creating snapshot of ${REPO}-${dist} repository mirror.."
+  SNAPSHOT=${REPO}-${dist}-`date +%s%N`
+  SNAPSHOTARRAY+="${SNAPSHOT} "
+  aptly snapshot create ${SNAPSHOT} from mirror ${REPO}-${dist}
 done
 
+echo "Snapshots results:"
 echo ${SNAPSHOTARRAY[@]}
 
-# Merge snapshots into a single snapshot with updates applied
-REPO_MERGED=${REPO}-merged-`date +%Y%m%d%H%M`
-echo "Merging snapshots into one.."
-aptly snapshot merge -latest \
-  ${REPO_MERGED} ${SNAPSHOTARRAY[@]}
+# # Merge snapshots into a single snapshot with updates applied
+# REPO_MERGED=${REPO}-merged-`date +%s%N`
+# echo "Merging snapshots into one.."
+# aptly snapshot merge -latest ${REPO_MERGED} ${SNAPSHOTARRAY[@]}
 
-echo "Enter GPG passphrase"
-read GPG_PASSPHRASE
+echo -n "Enter GPG passphrase:"
+read -s GPG_PASSPHRASE
+echo
 
-# Publish the latest merged snapshot
+# Publish the latest snapshots
 set +e
-aptly publish list -raw | awk '{print $2}' | grep "^${REPO}$"
-if [[ $? -eq 0 ]]; then
-  aptly publish switch \
-    -passphrase="${GPG_PASSPHRASE}" \
-    ${REPO} ${REPO_MERGED}
-else
-  aptly publish snapshot \
-    -passphrase="${GPG_PASSPHRASE}" \
-    -distribution=${REPO_MERGED}
-fi
+for snap in ${SNAPSHOTARRAY[@]}; do
+  snap_name=$(echo ${snap} | awk -F'-' '{print $1" "$2}')
+  dist=$(echo ${snap_name} | awk '{print $2}')
+  aptly publish list -raw | grep "^${snap_name}$"
+  if [[ $? -eq 0 ]]; then
+    aptly publish switch -passphrase="${GPG_PASSPHRASE}" ${dist} ${REPO} ${snap}
+  else
+    # Keys must be before name of a snapshot
+    # -distribution=${REPO_MERGED} - it can be missed
+    aptly publish snapshot -passphrase="${GPG_PASSPHRASE}" ${snap} ${REPO}
+  fi
+done
 set -e
 
 # Export the all GPG Public keys
