@@ -40,10 +40,14 @@ RUN apt-get -q update \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
+# Configure Nginx
+RUN rm /etc/nginx/sites-enabled/*
+
 # Create volume
 VOLUME [ "/opt/aptly" ]
-
 RUN ln -s /opt/aptly/gpg /root/.gnupg
+# Allow use nginx wo initial procedure of GPG
+RUN mkdir -p /opt/aptly/public
 
 # Install configurations
 COPY assets/gpg.conf /root/.gnupg/gpg.conf
@@ -54,11 +58,7 @@ COPY assets/supervisord.web.conf /etc/supervisor/conf.d/web.conf
 # Install scripts
 COPY assets/*.sh /opt/
 
-# Configure Nginx
-RUN rm /etc/nginx/sites-enabled/*
 
-# Allow use nginx wo initial procedure of GPG
-RUN mkdir -p /opt/aptly/public
 
 # Declare ports in use
 EXPOSE 80 8080

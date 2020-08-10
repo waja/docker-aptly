@@ -59,7 +59,7 @@ if [[ ! -d /opt/aptly/public ]] || [[ ! -f /opt/aptly/public/aptly_repo_signing.
   mkdir -p /opt/aptly/public
   # Export only all public keys,
   # for export private keys use --export-secret-keys
-  gpg --export --armor > /opt/aptly/public/aptly_repo_signing.key
+  gpg --keyring /opt/aptly/gpg/pubring.gpg --export --armor > /opt/aptly/public/aptly_repo_signing.key
 else
   echo "No need to export the GPG keys"
 fi
