@@ -100,8 +100,8 @@ fi
 set -e
 
 # Export the all GPG Public keys
-if [[ ! -f /opt/aptly/public/aptly_repo_signing.key ]]; then
-  gpg --export --armor > /opt/aptly/public/aptly_repo_signing.key
+if [[ ! -f /opt/aptly/public/repo_signing.key ]]; then
+  gpg --export --armor > /opt/aptly/public/repo_signing.key
 fi
 
 # Generate Aptly Graph

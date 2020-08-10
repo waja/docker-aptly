@@ -40,7 +40,7 @@ RESP1=`curl -I --max-time 2 http://localhost:80 2>/dev/null`
     || { echo2 "Error: Host is down" "RED"; exit 1; }
 
 
-RESP2=`curl -I --max-time 2 http://localhost:80/aptly_repo_signing.key 2>/dev/null`
+RESP2=`curl -I --max-time 2 http://localhost:80/repo_signing.key 2>/dev/null`
 
 [[ $(echo ${RESP2} | grep "HTTP/1.1 200 OK") ]] \
     && { echo2 "The file exists" "GREEN"; } \

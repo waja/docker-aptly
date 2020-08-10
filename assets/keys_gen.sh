@@ -54,12 +54,12 @@ else
 fi
 
 # If the repository public key doesn't exist, export it.
-if [[ ! -d /opt/aptly/public ]] || [[ ! -f /opt/aptly/public/aptly_repo_signing.key ]]; then
+if [[ ! -d /opt/aptly/public ]] || [[ ! -f /opt/aptly/public/repo_signing.key ]]; then
   echo "Export the GPG public keys"
   mkdir -p /opt/aptly/public
   # Export only all public keys,
   # for export private keys use --export-secret-keys
-  gpg --keyring /opt/aptly/gpg/pubring.gpg --export --armor > /opt/aptly/public/aptly_repo_signing.key
+  gpg --keyring /opt/aptly/gpg/pubring.gpg --export --armor > /opt/aptly/public/repo_signing.key
 else
   echo "No need to export the GPG keys"
 fi
