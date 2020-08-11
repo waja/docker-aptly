@@ -16,7 +16,8 @@ if [[ -f ${1} ]]; then
   O="/opt/aptly/gpg/trustedkeys.gpg"
 
   # gpg --no-options --no-default-keyring --keyring ${O} --keyserver pool.sks-keyservers.net --recv-keys 9D6D8F6BC857C906 AA8E81B4331F7F50
-  # cat file.gpg | gpg --no-options --no-default-keyring --keyring ${O} --import
+  # wget -O - http://repo.coex.space/aptly_repo_signing.key | \
+  # gpg --no-options --no-default-keyring --keyring "/opt/aptly/gpg/trustedkeys.gpg" --import
 
   gpg --no-options --no-default-keyring --keyring ${I} --export | \
   gpg --no-options --no-default-keyring --keyring ${O} --import
