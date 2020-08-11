@@ -59,9 +59,9 @@ COPY assets/supervisord.web.conf /etc/supervisor/conf.d/web.conf
 # Install scripts
 COPY assets/*.sh /opt/
 
-RUN wget https://raw.githubusercontent.com/aptly-dev/aptly/v1.4.0/completion.d/aptly \
-  -O /usr/share/bash-completion/completions/aptly 2>/dev/stdout \
-  && echo "if ! shopt -oq posix; then\n\
+ADD https://raw.githubusercontent.com/aptly-dev/aptly/v1.4.0/completion.d/aptly /usr/share/bash-completion/completions/aptly
+
+RUN echo "if ! shopt -oq posix; then\n\
   if [ -f /usr/share/bash-completion/bash_completion ]; then\n\
     . /usr/share/bash-completion/bash_completion\n\
   elif [ -f /etc/bash_completion ]; then\n\
