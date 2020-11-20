@@ -3,7 +3,7 @@
 # Copyright 2018-2020 Artem Smirnov <urpylka@gmail.com>
 # Licensed under the Apache License, Version 2.0
 
-# Start Supervisor when container starts (He calls nginx)
+# Start Supervisor when container starts (He calls nginx and Aptly API)
 /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf &
 sleep 4
 

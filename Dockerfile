@@ -69,7 +69,6 @@ RUN echo "if ! shopt -oq posix; then\n\
   fi\n\
 fi" >> /etc/bash.bashrc
 
-
 # Declare ports in use
 EXPOSE 80 8080
 

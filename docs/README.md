@@ -226,7 +226,7 @@ docker rm 85de5904f6fc73c04f4f8e7d08a09a1a63c2ba28afb5ce45aa9578ebdefeadc7
 3. After that you need to setup the public key is associated with this repo to `/opt/aptly/gpg/trustedkeys.gpg` (it is linked w `/root/.gnupg/trustedkeys.gpg`), for this use `/opt/keys_imp.sh`, otherwise you will catch the error:
 
     ```log
-    ERROR: unable to fetch mirror: verification of detached signature    failed: exit status 2
+    ERROR: unable to fetch mirror: verification of detached signature failed: exit status 2
     ```
 
 > If the script fails due to network disconnects etc, just re-run it.
@@ -239,6 +239,6 @@ When the script completes, you should have a functional mirror that you can poin
 
 ___
 
-* © 2018-2020 Artem Smirnov
-* © 2016 Bryan J. Hong
-* Licensed under the Apache License, Version 2.0
+© 2018-2020 Artem Smirnov \
+© 2016 Bryan J. Hong \
+Licensed under the Apache License, Version 2.0

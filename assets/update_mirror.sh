@@ -48,30 +48,30 @@ ARCH=armhf
 
 usage()
 {
-  echo "usage: update-mirror.sh -u $UPSTREAM_URL -r $REPO -d $DISTS -c $COMPONENTS -a $ARCH"
+  echo "usage: update-mirror.sh -u ${UPSTREAM_URL} -r ${REPO} -d ${DISTS} -c ${COMPONENTS} -a ${ARCH}"
 }
 
-while [ "$1" != "" ]; do
-  case $1 in
+while [ "${1}" != "" ]; do
+  case ${1} in
     -u | --upstream-url )
       shift
-      UPSTREAM_URL="$1"
+      UPSTREAM_URL="${1}"
       ;;
     -r | --repo )
       shift
-      REPO="$1"
+      REPO="${1}]"
       ;;
     -d | --dists )
       shift
-      DISTS=( "$1" )
+      DISTS=( "${1}" )
       ;;
     -c | --components )
       shift
-      COMPONENTS=( "$1" )
+      COMPONENTS=( "${1}" )
       ;;
     -a | --arch )
       shift
-      ARCH="$1"
+      ARCH="${1}"
       ;;
     -h | --help )
       usage

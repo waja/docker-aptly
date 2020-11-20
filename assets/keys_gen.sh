@@ -19,18 +19,18 @@ if [[ ! -d /opt/aptly/gpg/private-keys-v1.d/ ]] || [[ ! -f /opt/aptly/gpg/pubrin
   echo "Generating the new GPG keypair"
   cp -a /dev/urandom /dev/random
 
-  mkdir -p $GNUPGHOME
-  chmod 600 $GNUPGHOME
+  mkdir -p ${GNUPGHOME}
+  chmod 600 ${GNUPGHOME}
 
   # If your system doesn't have a lot of entropy this may, take a long time
   # Google how-to create "artificial" entropy, if this gets stuck
-  gpg2 --batch --passphrase "$GPG_PASSPHRASE" --quick-gen-key "$FULL_NAME <$EMAIL_ADDRESS>" default default 0
+  gpg2 --batch --passphrase "{$}GPG_PASSPHRASE}" --quick-gen-key "${FULL_NAME} <${EMAIL_ADDRESS}>" default default 0
 else
   echo "No need to generate the new GPG keypair"
 fi
 
 # If the repository public key doesn't exist, export it.
-if [[ ! -d /opt/aptly/public ]] || 
+if [[ ! -d /opt/aptly/public ]] ||
    [[ ! -f /opt/aptly/public/repo_signing.key ]] ||
    [[ ! -f /opt/aptly/public/repo_signing.gpg ]]; then
   echo "Export the GPG public keys"
