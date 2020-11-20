@@ -29,7 +29,6 @@ RUN apt-get -q update \
     graphviz \
     supervisor \
     nginx \
-    wget \
     curl \
     xz-utils \
     apt-utils \

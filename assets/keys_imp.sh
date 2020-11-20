@@ -15,7 +15,7 @@ if [[ -f ${1} ]]; then
   I=${1}
 
   # gpg2 --no-options --no-default-keyring --keyring trustedkeys.gpg --keyserver pool.sks-keyservers.net --recv-keys 9D6D8F6BC857C906 AA8E81B4331F7F50
-  # wget -O - http://repo.urpylka.com/repo_signing.key | \
+  # curl -O - http://repo.urpylka.com/repo_signing.key | \
   # gpg2 --no-options --no-default-keyring --keyring trustedkeys.gpg --import
 
   gpg2 --no-options --no-default-keyring --keyring ${I} --export | \

@@ -159,7 +159,7 @@ docker rm 85de5904f6fc73c04f4f8e7d08a09a1a63c2ba28afb5ce45aa9578ebdefeadc7
 1. Fetch the public GPG key from your aptly repository and add it to your trusted repositories
 
     ```bash
-    wget http://YOUR_HOST_FOR_APTLY/repo_signing.key
+    curl -O http://YOUR_HOST_FOR_APTLY/repo_signing.key
     apt-key add repo_signing.key
     ```
 
