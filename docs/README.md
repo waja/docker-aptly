@@ -237,6 +237,10 @@ docker rm 85de5904f6fc73c04f4f8e7d08a09a1a63c2ba28afb5ce45aa9578ebdefeadc7
 
 When the script completes, you should have a functional mirror that you can point a client to.
 
+As example:
+
+![image](/docs/aptly_graph.png)
+
 ___
 
 © 2018-2020 Artem Smirnov \
