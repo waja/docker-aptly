@@ -38,6 +38,8 @@
 
     `"First Last" "your@email.com" "Password"` will be associated with the GPG apt signing key.
 
+    > It creates `/opt/aptly/public` dir and `repo_signing.gpg`, `repo_signing.key` files. If `/opt/aptly/public` doesn't exist it will raise 404 error of Nginx.
+
     Keep in the mind that the GPG passphrase using ONLY BY USERS (at the external container) for:
 
     1. Generating GPG keys (In the temporary container)
