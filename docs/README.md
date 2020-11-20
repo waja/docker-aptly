@@ -225,7 +225,7 @@ docker rm 85de5904f6fc73c04f4f8e7d08a09a1a63c2ba28afb5ce45aa9578ebdefeadc7
     ARCH=armhf
     ```
 
-3. After that you need to setup the public key is associated with this repo to `/opt/aptly/gpg/trustedkeys.gpg` (it is linked w `/root/.gnupg/trustedkeys.gpg`), for this use `/opt/keys_imp.sh`, otherwise you will catch the error:
+3. After that you need to setup the public key is associated with this repo to `/opt/aptly/gpg/trustedkeys.gpg`, for this use `/opt/keys_imp.sh`, otherwise you will catch the error:
 
     ```log
     ERROR: unable to fetch mirror: verification of detached signature failed: exit status 2

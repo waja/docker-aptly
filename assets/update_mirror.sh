@@ -7,7 +7,7 @@ set -e
 # For any section you select, you need to install repo signing public
 # key, if you wanna take it from your system you can look for in:
 # /usr/share/keyrings/ (like /usr/share/keyrings/ubuntu-archive-keyring.gpg) or you can take it from apt-key (apt-key help / list / export).
-# Export the key to the pubring in GPG utility (ususaly /root/.gnupg/pubring.gpg). You can use prepared script /opt/keys_imp.sh for it.
+# Export the key to the pubring in GPG utility (usually ${GNUPGHOME}/pubring.gpg). You can use prepared script /opt/keys_imp.sh for it.
 
 # The variables (as set below) will create a mirror of the Ubuntu Trusty repo
 # with the main & universe components, you can add other components like restricted
