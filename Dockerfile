@@ -32,6 +32,7 @@ RUN apt-get -q update \
     curl \
     xz-utils \
     apt-utils \
+    gettext-base \
     bash-completion
 
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys ED75B5A4483DA07C \
@@ -52,7 +53,7 @@ ENV GNUPGHOME="/opt/aptly/gpg"
 
 # Install configurations
 COPY assets/aptly.conf /etc/aptly.conf
-COPY assets/nginx.conf /etc/nginx/conf.d/default.conf
+COPY assets/nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY assets/supervisord.web.conf /etc/supervisor/conf.d/web.conf
 
 # Install scripts
@@ -70,6 +71,10 @@ fi" >> /etc/bash.bashrc
 
 # Declare ports in use
 EXPOSE 80 8080
+
+ENV NGINX_CLIENT_MAX_BODY_SIZE=100M
+
+ENTRYPOINT [ "/opt/entrypoint.sh" ]
 
 # Start Supervisor when container starts (It calls nginx)
 CMD /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf

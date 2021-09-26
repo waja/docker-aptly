@@ -64,7 +64,7 @@
 
     > docker: Error response from daemon: failed to initialize logging driver: Unix syslog delivery error.
 
-    Probably you haven't some driver. Execute `docker rm aptly` and try again without `--log-driver=syslog`.
+    Probably you don't have some driver. Execute `docker rm aptly` and try again without `--log-driver=syslog`.
 
     Flag | Explanation
     --- | ---
@@ -76,6 +76,8 @@
     `--publish 80:80` | Docker host port : mapped port in the container
     `--network="some-nw"` | Attach a docker container to some network
     `--rm` | Remove a docker container when it will be stopped
+
+    > Also if you need to upload `.deb` file more than 100MB you can specify the nginx parameter via docker environment `-e NGINX_CLIENT_MAX_BODY_SIZE='100M'`.
 
 5. **Next steps**
 
